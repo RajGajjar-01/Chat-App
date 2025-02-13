@@ -1,4 +1,108 @@
-{% extends "board/Base.html" %}
-{% block content %}
-    <div>This is home</div>
-{% endblock content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <style>
+        #chat-log {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        .sent {
+            color: red; /* Style for sent messages */
+            text-align: right; /* Align sent messages to the right */
+        }
+        .received {
+            color: black; /* Style for received messages */
+            text-align: left; /* Align received messages to the left */
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Chat</h1>
+    <input type="text" id="message-input" placeholder="Type your message">
+    <button id="send-button">Send</button>
+
+    <!-- Container to display messages -->
+    <div id="chat-log"></div>
+
+    <script>
+        // WebSocket connection
+        const chatroomName = "room1"; // Replace with your chat room name
+        const socket = new WebSocket(
+            `ws://${window.location.host}/ws/chat/${chatroomName}/` // WebSocket URL
+        );
+
+        // Event: When the connection is opened
+        socket.onopen = (event) => {
+            console.log("WebSocket connection established.");
+        };
+        
+        // Event: When a message is received from the server
+        socket.onmessage = (event) => {
+            console.log(event.data.sender);
+            const data = JSON.parse(event.data); // Parse the received message
+            const message = data.message; // Extract the message content
+            const sender = data.sender; // Extract the sender information
+            console.log(sender);
+
+            // Create a new <p> element for the message
+            const messageElement = document.createElement("p");
+            messageElement.textContent = message;
+
+            // Add the appropriate class based on the sender
+            if (sender === "self") {
+                messageElement.classList.add("sent"); // Sent by the current user
+            } else {
+                messageElement.classList.add("received"); // Received from another user
+            }
+
+            // Append the message to the chat log
+            const chatLog = document.getElementById("chat-log");
+            chatLog.appendChild(messageElement);
+
+            // Scroll to the bottom of the chat log
+            chatLog.scrollTop = chatLog.scrollHeight;
+        };
+
+        // Event: When the connection is closed
+        socket.onclose = (event) => {
+            console.log("WebSocket connection closed.");
+        };
+
+        // Event: When there's an error
+        socket.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
+
+        // Send a message to the server
+        const sendButton = document.getElementById("send-button");
+        const messageInput = document.getElementById("message-input");
+
+        sendButton.addEventListener("click", () => {
+            const message = messageInput.value;
+            if (message) {
+                // Send the message to the server
+                socket.send(JSON.stringify({
+                    "message": message,
+                    "sender": "self", // Indicate that this message is sent by the current user
+                }));
+
+                console.log("Sent message:", message);
+                messageInput.value = ""; // Clear the input field
+            }
+        });
+
+        // Allow pressing "Enter" to send messages
+        messageInput.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                sendButton.click(); // Trigger the send button click
+            }
+        });
+    </script>
+</body>
+</html>
