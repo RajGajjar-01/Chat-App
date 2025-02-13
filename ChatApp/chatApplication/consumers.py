@@ -1,5 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+from . import models
+from asgiref.sync import sync_to_async
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -11,6 +13,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if not self.user.is_authenticated:
             await self.close()
             return
+
+        self.room = await self.get_room(self.room_name)
 
         # Join the room group
         await self.channel_layer.group_add(
@@ -30,6 +34,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
 
+        await self.save_message(self.user, self.room, message)
         # Send the message back to the sender (self) with sender="self"
         await self.send(text_data=json.dumps({
             "message": message,
@@ -63,3 +68,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "sender": sender,  # Include sender information
                 "username": username,  # Include the sender's username
             }))
+
+    @sync_to_async
+    def get_room(self, room_name):
+        # Fetch the Room object from the database
+        return models.Room.objects.get(name=room_name)
+
+    @sync_to_async
+    def save_message(self, user, room, message):
+        # Save the message to the database
+        models.Message.objects.create(room=room, sender=user, message=message)
