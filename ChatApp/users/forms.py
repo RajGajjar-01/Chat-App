@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from .models import Profile
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
@@ -67,35 +66,4 @@ class UserLoginForm(forms.Form):
         'class': 'form-control',
         'placeholder': 'Password',
     }))
-
-class UserUpdateForm(forms.ModelForm):  
-    class Meta:
-        model = User
-        fields = ['username', 'email']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-    
-        for field in self.fields:
-            
-            self.fields[field].widget.attrs.update({
-                'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-            })
-
-class ProfileUpdateForm(forms.ModelForm):
-    class Meta:
-        model = Profile 
-        fields = ['image', 'bio', 'location', 'website']    
-
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    
-        for field in self.fields:
-            
-            if field != 'image':
-                self.fields[field].widget.attrs.update({
-                    'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
-                })
                 

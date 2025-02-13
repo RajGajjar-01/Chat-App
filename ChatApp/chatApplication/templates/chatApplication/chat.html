@@ -23,9 +23,6 @@
     </style>
 </head>
 <body>
-    {% if user.is_authenticated %}
-        <div>{{user.username}}</div>
-    {% endif %}
     <h1>WebSocket Chat</h1>
     <input type="text" id="message-input" placeholder="Type your message">
     <button id="send-button">Send</button>
@@ -52,16 +49,14 @@
             const message = data.message; // Extract the message content
             const sender = data.sender; // Extract the sender information
             console.log(sender);
-            console.log(data.username);
 
             // Create a new <p> element for the message
             const messageElement = document.createElement("p");
-            messageElement.textContent = data.username + ':' +  message;
+            messageElement.textContent = message;
 
             // Add the appropriate class based on the sender
             if (sender === "self") {
-                messageElement.classList.add("sent");
-             // Sent by the current user
+                messageElement.classList.add("sent"); // Sent by the current user
             } else {
                 messageElement.classList.add("received"); // Received from another user
             }

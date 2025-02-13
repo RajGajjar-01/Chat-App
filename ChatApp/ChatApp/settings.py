@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'channels',
 
     'chatApplication',
-    'users',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -74,7 +73,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ChatApp.wsgi.application'
 
 
 # Database
@@ -141,7 +139,3 @@ CHANNEL_LAYERS = {
 
 # for django channels -- change 'ChatApp' to your project name
 ASGI_APPLICATION = "ChatApp.asgi.application"
-
-LOGIN_REDIRECT_URL = "/home"
-LOGOUT_REDIRECT_URL = "/landing"
-LOGIN_URL = '/user/login/'
