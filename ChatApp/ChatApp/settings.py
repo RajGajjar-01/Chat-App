@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     # For django channels
     'daphne',
     'channels',
+    
+    'chatApplication',
 
     'django.contrib.admin',
     'django.contrib.auth',
