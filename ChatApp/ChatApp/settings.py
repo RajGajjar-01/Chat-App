@@ -34,8 +34,9 @@ INSTALLED_APPS = [
     # For django channels
     'daphne',
     'channels',
-    
+
     'chatApplication',
+    'users',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -140,3 +141,7 @@ CHANNEL_LAYERS = {
 
 # for django channels -- change 'ChatApp' to your project name
 ASGI_APPLICATION = "ChatApp.asgi.application"
+
+LOGIN_REDIRECT_URL = "/home"
+LOGOUT_REDIRECT_URL = "/landing"
+LOGIN_URL = '/user/login/'
